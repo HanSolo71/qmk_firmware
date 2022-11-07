@@ -1,5 +1,39 @@
 #include QMK_KEYBOARD_H
 
+extern keymap_config_t keymap_config;
+
+// Each layer gets a name for readability, which is then used in the keymap matrix below.
+// The underscores don't mean anything - you can have a layer called STUFF or any other name.
+// Layer names don't all need to be of the same length, obviously, and you can also skip them
+// entirely and just use numbers.
+#define _BASE 0
+#define _FN1 1
+
+bool is_alt_tab_active = false; // ADD this near the begining of keymap.c
+bool is_alt_shift_tab_active = false; // ADD this near the begining of keymap.c
+uint16_t alt_tab_timer = 0;     // we will be using them soon.
+
+//ALT TAB Encoder Timer
+void matrix_scan_user(void) { // The very important timer.
+  if (is_alt_tab_active) {
+    if (timer_elapsed(alt_tab_timer) > 1000) {
+      unregister_code(KC_LALT);
+      unregister_code(KC_LSHIFT);
+      is_alt_tab_active = false;
+      is_alt_shift_tab_active = false;
+    }
+  }
+};
+
+
+
+
+enum custom_keycodes {
+  QWERTY = SAFE_RANGE,
+  ALT_TAB,
+  ALT_SHIFT_TAB,
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_80_with_macro(
     KC_MEDIA_PLAY_PAUSE,          KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_AUDIO_MUTE,
